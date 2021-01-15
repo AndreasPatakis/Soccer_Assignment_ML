@@ -43,41 +43,53 @@ for company in range(num_of_companies):
 
 
 # CALCULATING WEIGHTS <>
-
 k = 10
-training_set,testing_set = smp.k_fold_cross_validation(companies_odds[0],k)
-training_set_matches = len(training_set[0])
-testing_set_matches = len(testing_set[0])
-num_of_matches = training_set_matches + testing_set_matches
+company_fold_weight = [[]for x in range(num_of_companies)]
+training_set = [[]for x in range(num_of_companies)]
+testing_set = [[]for x in range(num_of_companies)]
+for company in range(num_of_companies):
+    training_set_i,testing_set_i = smp.k_fold_cross_validation(companies_odds[company],k)
+    training_set_matches = len(training_set_i[company])
+    testing_set_matches = len(testing_set_i[company])
+    num_of_matches = training_set_matches + testing_set_matches
+    for fold in range(k):
+        X = smp.featureMatrix(training_set_i[fold])
+        fold_weights = [[]for x in range(3)]
+        for i,class_i in enumerate(["H","D","A"]):
+            y = smp.observedValue(Match_Results,class_i,fold,testing_set_matches,num_of_matches)
+            w_i = np.linalg.inv(X.T @ X) @ (X.T @ y)
+            fold_weights[i] = w_i
+        company_fold_weight[company].append((fold_weights))
+    training_set[company] = (training_set_i)
+    testing_set[company] = (testing_set_i)
 
-W = [[]for x in range(k)]
-
-for fold in range(k):
-    X = smp.featureMatrix(training_set[fold])
-    for class_i in ["H","D","A"]:
-        y = smp.observedValue(Match_Results,class_i,fold,testing_set_matches,num_of_matches)
-        w_i = np.linalg.inv(X.T @ X) @ (X.T @ y)
-        W[fold].append(w_i)
 
 # CALCULATING WEIGHTS </>
 
 
 # TESTING SET AND EVALUATING BEST WEIGHTS <>
 
-scores = []
+scores = [[]for x in range(num_of_companies)]
+W = []
 
-for fold in range(k):
-    results = smp.score_weights(testing_set[fold],W[fold],fold,Match_Results)
-    scores.append(results)
+for company in range(num_of_companies):
+    for fold in range(k):
+        results = smp.score_weights(testing_set[company][fold],company_fold_weight[company][fold],fold,Match_Results)
+        scores[company].append(results)
 
-max_score = scores[0][0]
-best_fold = 0
-for fold in range(1,k):
-    if(scores[fold][0] > max_score):
-        max_score = scores[fold][0]
-        best_fold = fold
 
-weights = W[best_fold]
+for company,company_score in enumerate(scores):
+    max_score = company_score[0][0]
+    best_fold = 0
+    for fold in range(1,k):
+        if(company_score[fold][0] > max_score):
+            max_score = company_score[fold][0]
+            best_fold = fold
+
+    best_score = (max_score/testing_set_matches)*100                        #Score of the best fold in % percentage (correct_guess/total_matches)
+    W.append(company_fold_weight[company][best_fold])                       #Storing weights of the best fold for each betting company"""
+
+
 
 
 
