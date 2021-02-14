@@ -43,11 +43,13 @@ k = 10
 company_fold_weight = [[]for x in range(num_of_companies)]
 training_set = [[]for x in range(num_of_companies)]
 testing_set = [[]for x in range(num_of_companies)]
+#FOREACH COMPANY
 for company in range(num_of_companies):
     training_set_i,testing_set_i = smp.k_fold_cross_validation(companies_odds[company],k)
     training_set_matches = len(training_set_i[company])
     testing_set_matches = len(testing_set_i[company])
     num_of_matches = training_set_matches + testing_set_matches
+    #FOREACH FOLD
     for fold in range(k):
         X = smp.featureMatrix(training_set_i[fold])
         fold_weights = [[]for x in range(3)]

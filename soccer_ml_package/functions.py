@@ -82,3 +82,11 @@ def score_weights(test_set,w,fold,match_results):
         else:
             wrong += 1
     return [correct,wrong]
+
+    def robbins_monro(training_set,weights):
+        def hypothesis(pos):
+            result = 0
+            for i in range(len(W)):
+                result += W[i]*X[pos][i]
+            return result
+        
