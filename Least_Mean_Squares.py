@@ -55,8 +55,8 @@ for company in range(num_of_companies):
         fold_weights = [[]for x in range(3)]
         for i,class_i in enumerate(["H","D","A"]):
             y = smp.observedValue(Match_Results,class_i,fold,testing_set_matches,num_of_matches)
-            w_i = np.linalg.inv(X.T @ X) @ (X.T @ y)
-            fold_weights[i] = w_i   
+            w_i = smp.robbins_monro(X,y)
+            fold_weights[i] = w_i
         company_fold_weight[company].append((fold_weights))
     training_set[company] = (training_set_i)
     testing_set[company] = (testing_set_i)
@@ -135,7 +135,7 @@ for c,company in enumerate(W):
     ax.scatter(to_scatter_away_wins[:,0],to_scatter_away_wins[:,1],to_scatter_away_wins[:,2],color = colors[2], label = "Away Wins")
 
 
-    plt.title("Odds and Best Decision Doundaries for : "+companies[c]+
+    plt.title("Odds and Best Decision Boundaries for : "+companies[c]+
     "\n Evaluation score: "+str(scores[c][1])+"%, achieved from fold: "+str(scores[c][0])+"/"+str(k))
     ax.set_xlabel("HOME WINS")
     ax.set_ylabel("DRAW")

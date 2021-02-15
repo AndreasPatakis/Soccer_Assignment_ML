@@ -135,7 +135,7 @@ for c,company in enumerate(W):
     ax.scatter(to_scatter_away_wins[:,0],to_scatter_away_wins[:,1],to_scatter_away_wins[:,2],color = colors[2], label = "Away Wins")
 
 
-    plt.title("Odds and Best Decision Doundaries for : "+companies[c]+
+    plt.title("Odds and Best Decision Boundaries for : "+companies[c]+
     "\n Evaluation score: "+str(scores[c][1])+"%, achieved from fold: "+str(scores[c][0])+"/"+str(k))
     ax.set_xlabel("HOME WINS")
     ax.set_ylabel("DRAW")

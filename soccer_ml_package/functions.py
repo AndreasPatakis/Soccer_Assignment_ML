@@ -4,7 +4,6 @@ plt.style.use('seaborn-whitegrid')
 import pandas as pd
 import random as rand
 import csv
-
 #Returns the winner of a match based on the scored goals. "H" if home team wins, "A" if away team wins, "D" if it was a draw.
 def match_result(home_goals,away_goals):
     goal_diff = int(home_goals) - int(away_goals)
@@ -83,10 +82,26 @@ def score_weights(test_set,w,fold,match_results):
             wrong += 1
     return [correct,wrong]
 
-    def robbins_monro(training_set,weights):
-        def hypothesis(pos):
-            result = 0
-            for i in range(len(W)):
-                result += W[i]*X[pos][i]
-            return result
-        
+
+def robbins_monro(X,y):
+    def hypothesis(match,W):
+        result = 0
+        for i in range(len(W)):
+            result += W[i]*X[match][i]
+        return result
+    init_weights = [0.0,0.0,0.0,0.0]
+    weights = [0.0,0.0,0.0,0.0]
+    num_of_matches = len(X)
+    a = 1
+    convergence = 0.0000001
+    for match in range(1,num_of_matches):
+        if(a <= convergence):
+            break
+        else:
+            learning_rate = a/match #+0.001 bit more accurate results
+            for w_i in range(4):
+                J = y[match]-hypothesis(match,init_weights)
+                step = learning_rate*J
+                weights[w_i] = init_weights[w_i]+step
+            init_weights = weights
+    return weights
