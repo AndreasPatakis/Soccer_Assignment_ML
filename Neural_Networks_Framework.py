@@ -1,6 +1,6 @@
 import numpy as np
 import random as rand
-import soccer_ml_package.functions as smp
+
 
 
 class Neural_Network:
@@ -11,6 +11,7 @@ class Neural_Network:
         self.Weights = []
         self.Biases = []
         self.H = []
+        self.Results = []
         self.do_prework()
 
     def activation_net(self, W,X,b):
@@ -66,7 +67,9 @@ class Neural_Network:
                 h.append([net,out])
             self.H[layer] = np.array(h)
             print("\nNodes:")
-            input(self.H[layer][:,1])
+            print(self.H[layer][:,1])
+        self.Results.append(self.H[len(self.Layers)-1][:,1])
+        print("Last Layer:\n",self.Results[0])
 
 
 
@@ -75,5 +78,5 @@ class Neural_Network:
 
 
 
-net1 = Neural_Network([1,2,3],[2,3],0)
+net1 = Neural_Network([1,1],[2,2],0)
 net1.forward_feed()
