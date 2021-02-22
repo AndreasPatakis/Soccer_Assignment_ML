@@ -32,7 +32,6 @@ for t in Team_Attributes:
     temp.append([season,float(t[2]),float(t[4])/50,float(t[6])/50,float(t[9])/50,float(t[11])/50,float(t[13])/50,float(t[16])/50,float(t[18])/50,float(t[20])/50])
 
 Team_Attributes = temp
-input(Team_Attributes[0])
 num_of_matches = len(Matches_From_Csv)
 num_of_companies = len(companies)
 
