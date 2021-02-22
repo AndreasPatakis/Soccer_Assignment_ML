@@ -42,8 +42,8 @@ def featureMatrix(company):
     return X
 
 
-def k_fold_cross_validation(company,k_fold):
-    matches = len(company)
+def k_fold_cross_validation(all_inputs,k_fold):
+    matches = len(all_inputs)
     each_fold = int(matches/k_fold)
     num_of_matches = each_fold*k_fold
     training_set = []
@@ -52,13 +52,13 @@ def k_fold_cross_validation(company,k_fold):
         start_test = fold*each_fold
         for m in range(0,num_of_matches,each_fold):
             if(m == start_test):
-                f = company[m:m+each_fold]
-                testing_set.append(company[m:m+each_fold])
+                f = all_inputs[m:m+each_fold]
+                testing_set.append(all_inputs[m:m+each_fold])
             else:
                 if(len(training_set) < fold+1):
-                    training_set.append(company[m:m+each_fold])
+                    training_set.append(all_inputs[m:m+each_fold])
                 else:
-                    training_set[fold] += company[m:m+each_fold]
+                    training_set[fold] += all_inputs[m:m+each_fold]
     return training_set,testing_set
 
 

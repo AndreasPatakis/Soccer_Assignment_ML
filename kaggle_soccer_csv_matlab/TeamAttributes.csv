@@ -1111,12 +1111,6 @@ id,team_fifa_api_id,team_api_id,date,buildUpPlaySpeed,buildUpPlayDribblingClass,
 1110,631,8649,2013-09-20 00:00:00,35,Little,62,Mixed,Organised,50,Normal,36,Normal,50,Normal,Organised,40,Medium,56,Press,47,Normal,Cover
 1111,631,8649,2014-09-19 00:00:00,34,Normal,34,Mixed,Organised,44,Normal,38,Normal,38,Normal,Organised,39,Medium,51,Press,44,Normal,Cover
 1112,631,8649,2015-09-10 00:00:00,45,Normal,60,Mixed,Organised,46,Normal,49,Normal,58,Normal,Organised,36,Medium,53,Press,34,Normal,Cover
-1113,874,1601,2010-02-22 00:00:00,30,Little,40,Mixed,Organised,50,Normal,35,Normal,70,Lots,Organised,65,Medium,60,Press,50,Normal,Cover
-1114,874,1601,2011-02-22 00:00:00,48,Little,51,Mixed,Organised,68,Risky,67,Lots,51,Normal,Organised,46,Medium,48,Press,50,Normal,Cover
-1115,874,1601,2012-02-22 00:00:00,53,Little,55,Mixed,Organised,44,Normal,65,Normal,50,Normal,Organised,43,Medium,44,Press,49,Normal,Cover
-1116,874,1601,2013-09-20 00:00:00,53,Little,55,Mixed,Organised,44,Normal,65,Normal,50,Normal,Organised,43,Medium,44,Press,49,Normal,Cover
-1117,874,1601,2014-09-19 00:00:00,53,Normal,38,Mixed,Organised,66,Normal,65,Normal,50,Normal,Organised,43,Medium,44,Press,49,Normal,Cover
-1118,874,1601,2015-09-10 00:00:00,47,Normal,38,Mixed,Organised,61,Normal,65,Normal,50,Normal,Organised,43,Medium,44,Press,49,Normal,Cover
 1119,1819,9853,2010-02-22 00:00:00,65,Little,65,Mixed,Organised,55,Normal,60,Normal,60,Normal,Organised,30,Deep,30,Contain,30,Narrow,Offside Trap
 1120,1819,9853,2011-02-22 00:00:00,65,Little,35,Mixed,Organised,35,Normal,65,Normal,65,Normal,Organised,35,Medium,45,Press,65,Normal,Cover
 1121,1819,9853,2012-02-22 00:00:00,49,Little,52,Mixed,Organised,48,Normal,52,Normal,52,Normal,Organised,35,Medium,44,Press,50,Normal,Cover

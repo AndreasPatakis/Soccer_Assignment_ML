@@ -45,6 +45,7 @@ training_set = [[]for x in range(num_of_companies)]
 testing_set = [[]for x in range(num_of_companies)]
 #FOREACH COMPANY
 for company in range(num_of_companies):
+    #input(companies_odds[company])
     training_set_i,testing_set_i = smp.k_fold_cross_validation(companies_odds[company],k)
     training_set_matches = len(training_set_i[company])
     testing_set_matches = len(testing_set_i[company])
@@ -60,8 +61,6 @@ for company in range(num_of_companies):
         company_fold_weight[company].append((fold_weights))
     training_set[company] = (training_set_i)
     testing_set[company] = (testing_set_i)
-
-
 # CALCULATING WEIGHTS </>
 
 
@@ -85,7 +84,7 @@ for company,company_score in enumerate(scores):
             best_fold = fold
 
     best_score = (max_score/testing_set_matches)*100                    #Score of the best fold in % percentage (correct_guess/total_matches)
-    W.append(company_fold_weight[company][best_fold])                       #Storing weights of the best fold for each betting company
+    W.append(company_fold_weight[company][best_fold])                   #Storing weights of the best fold for each betting company
     scores[company] = [best_fold,int(best_score)]
 
 # TESTING SET AND EVALUATING BEST WEIGHTS </>

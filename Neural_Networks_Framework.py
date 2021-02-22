@@ -1,17 +1,15 @@
 import numpy as np
 import random as rand
 
-
-
 class Neural_Network:
-    def __init__(self,X,Layers,a,observed):
-        self.X = np.array(X).T
-        self.Observed = np.array(observed).T
+    def __init__(self,X,Layers,a):
+        self.X = X
         self.Layers = Layers
         self.Learning_Rate = a
         self.Weights = []
         self.Biases = []
         self.H = []
+        self.Evaluation = 0
         self.d_Weights = []
         self.d_Biases = []
         self.__do_prework()
@@ -40,6 +38,14 @@ class Neural_Network:
             sum += -2*(observed[node]-predicted)*self.__d_sigmoid(z)*w
         return sum
 
+    def __batches(self,inputs):
+        batch = 45
+        remaining = inputs%batch
+        while(remaining!=0):
+            batch += 1
+            remaining = inputs%batch
+        return batch
+
     #Methods of parent class
     def __do_prework(self):
         num_of_layers = len(self.Layers)
@@ -49,7 +55,7 @@ class Neural_Network:
             b = []
             if(layer == 0): #The first layer so we have to take as inputs the Xi's
                 w = [[]for x in range(nodes)]
-                features = len(self.X[:,0])
+                features = self.X
                 for node in range(nodes):
                     b.append(0.0)
                     for inputs in range(features):
@@ -67,7 +73,7 @@ class Neural_Network:
         self.Biases = biases
         self.H = [[]for x in range(num_of_layers)]
 
-    def forward_feed(self,set):
+    def __forward_feed(self,set):
         for layer,nodes in enumerate(self.Layers):
             h = []
             if(layer == 0): #In this case we have to take Xi's as inputs
@@ -81,11 +87,9 @@ class Neural_Network:
                 out = self.__activation_out(net)
                 h.append([net,out])
             self.H[layer] = np.array(h)
-        #print("For set ",set,"\n",self.H[layer])
-        #input()
 
 
-    def backprop_Last(self,observed): #Observed is a vector of the real outputs for current set
+    def __backprop_Last(self,observed): #Observed is a vector of the real outputs for current set
         layers = len(self.Layers)
         x = self.Layers[-2]
         y = self.Layers[-1]
@@ -110,8 +114,8 @@ class Neural_Network:
             self.d_Biases[0]+=b_reverse
 
 
-    def backprop_Previous(self,observed,dataset):
-        x = len(self.X[:,0])
+    def __backprop_Previous(self,observed,dataset):
+        x = self.X
         y = self.Layers[-2]
         w_reverse = np.zeros(shape=(x,y))
         b_reverse = np.zeros(y)
@@ -132,34 +136,23 @@ class Neural_Network:
         else:
             self.d_Weights[1]+=w_reverse
             self.d_Biases[1]+=b_reverse
-        #print("--------------")
-        #print(self.d_Weights)
+
 
 
     #X is a matrix, each row represents each input and each column the current value of a set
     #Y is a matrix containing the observed results for each set of inputs
-    def GradientDescent(self,X,Y):
+    def __GradientDescent(self,X,Y):
         #input(self.d_Weights)
         total_sets = len(X[0])
-        mini_batch = int(total_sets/50)                   #Total number of data
-        for j in range(50):
-            for i in range(j*mini_batch,(j+1)*mini_batch):                  #For each pair of data(one set of inputs, one set of outputs)
-                set = X[:,i]                             #Pair of inputs
-                observed = Y[:,i]                                              #Pair of outputs
-                self.forward_feed(set)                   #Do the forward feed for the given input
-                self.backprop_Last(observed)             #Then calculate the Total error of weights and biases connected to the last layer
-                self.backprop_Previous(observed,set)
-                """print("X: \n",set)
-                print("\nY:\n",observed)
-                print("\nWeights -2:\n",self.Weights[-2])
-                print("\nBiases -2:\n",self.Biases[-2])
-                print("\nH -2:\n",self.H[-2])
-                print("\nWeights -1:\n",self.Weights[-1])
-                print("\nBiases -1:\n",self.Biases[-1])
-                print("\nOutput:\n",self.H[-1])
-                input()      """                                        #Then calculate the Total error of weights and biases connected to the previous layer
-            #input(self.d_Weights)
-
+        batches = self.__batches(total_sets)
+        mini_batch = int(total_sets/batches)
+        for j in range(batches):
+            for i in range(j*mini_batch,(j+1)*mini_batch):
+                set = X[:,i]
+                observed = Y[:,i]
+                self.__forward_feed(set)
+                self.__backprop_Last(observed)
+                self.__backprop_Previous(observed,set)
             self.d_Weights.reverse()                     #d_Weights contains the Sum of the derivatives of the weights. Reverse(because [0] == last layer weights)
             self.d_Biases.reverse()                      #Same thing but for the biases
             layers = len(self.Layers)
@@ -186,12 +179,16 @@ class Neural_Network:
             self.d_Weights = []
             self.d_Biases = []
 
-    def train(self,repeats):
-        X = self.X
-        Y = self.Observed
+
+    def get_Eval(self):
+        return self.Evaluation
+
+    def train(self,X,Y,repeats):
+        X = np.array(X).T
+        Y = np.array(Y).T
         for repeat in range(repeats):
-            print("Training: ",repeat+1,"/",repeats," completed.")
-            self.GradientDescent(X,Y)
+            print("\tTraining: ",repeat+1,"/",repeats," completed.")
+            self.__GradientDescent(X,Y)
 
 
 
@@ -203,12 +200,14 @@ class Neural_Network:
         for i in range(total_sets):               #For each pair of data(one set of inputs, one set of outputs)
             set = X[:,i]                          #Pair of inputs
             observed = Y[:,i]
-            correct += self.evaluate(set,observed)
-        print("Classifier's Accuracy: ",(correct/total_sets)*100,"%")
+            correct += self.__evaluate(set,observed)
+        score = (correct/total_sets)*100
+        self.Evaluation = score
+        print("\nClassifier's Accuracy: ",score,"%")
 
 
-    def evaluate(self,set,observed):
-        self.forward_feed(set)
+    def __evaluate(self,set,observed):
+        self.__forward_feed(set)
         prediction = []
         result = observed.tolist()
         last_layer = self.H[-1]
@@ -220,48 +219,3 @@ class Neural_Network:
             return 1
         else:
             return 0
-
-train = []
-with open("./3dPointsTrain.csv","r") as datacsv:
-    for line in datacsv:
-        train.append(line[:-1].split(","))
-
-test = []
-with open("./3dPointsTest.csv","r") as datacsv:
-    for line in datacsv:
-        test.append(line[:-1].split(","))
-
-test_int = []
-train_int = []
-for list in test:
-    test_int.append([float(item) for item in list])
-for list in train:
-    train_int.append([float(item) for item in list])
-
-y_test = []
-y_train = []
-for list in test_int:
-    if(list[-1] == 1):
-        y_test.append([1,0,0])
-    elif(list[-1] == 2):
-        y_test.append([0,1,0])
-    else:
-        y_test.append([0,0,1])
-
-for list in train_int:
-    if(list[-1] == 1):
-        y_train.append([1,0,0])
-    elif(list[-1] == 2):
-        y_train.append([0,1,0])
-    else:
-        y_train.append([0,0,1])
-
-
-train_int = [item[:-1] for item in train_int]
-test_int = [item[:-1] for item in test_int]
-
-
-
-net1 = Neural_Network(train_int,[2,3],0.2,y_train)
-net1.train(25)
-net1.test(test_int,y_test)
