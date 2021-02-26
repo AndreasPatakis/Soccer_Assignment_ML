@@ -2,6 +2,7 @@ from Neural_Networks_Framework import Neural_Network
 import numpy as np
 import soccer_ml_package.functions as smp
 import random
+import threading
 
 # SETTING UP DATA <>
 Matches_From_Csv = []
@@ -75,23 +76,26 @@ for i,m in enumerate(Matches):
         Match_Results.append(output)
 print("\nFinished setting up data")
 # SETTING UP DATA </>
+
 k = 10
 training_sets,testing_sets = smp.k_fold_cross_validation(features,k)
 training_outputs,testing_outputs = smp.k_fold_cross_validation(Match_Results,k)
 
 inputs = len(features[0]) #28
 learning_rate = 0.2
-iterations = 8
+iterations = 1
+batch_size = 54
 scores = []
 
+
 for fold in range(k):
-    print("\n\nExamining Fold : ",fold+1,"/",k," for ",iterations," iterations.")
+    print("\n\nExamining Fold : ",fold+1,"/",k," for ",iterations," iterations, with batch size:",batch_size)
     net = Neural_Network(inputs,[10,3],learning_rate)
-    net.train(training_sets[fold],training_outputs[fold],iterations)
+    net.train(training_sets[fold],training_outputs[fold],iterations,batch_size)
     net.test(testing_sets[fold],testing_outputs[fold])
     score = net.get_Eval()
     scores.append(score)
 
-best_fold = scores.index(max(scores)) + 1
+best_fold = scores.index(max(scores))
 
-print("\nThe most accurate prediction came from fold ",best_fold," with prediction accuracy: ",scores[best_fold],"%")
+print("\nThe most accurate prediction came from fold ",best_fold+1," with prediction accuracy: ",scores[best_fold],"%")

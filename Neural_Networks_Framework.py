@@ -38,14 +38,6 @@ class Neural_Network:
             sum += -2*(observed[node]-predicted)*self.__d_sigmoid(z)*w
         return sum
 
-    def __batches(self,inputs):
-        batch = 45
-        remaining = inputs%batch
-        while(remaining!=0):
-            batch += 1
-            remaining = inputs%batch
-        return batch
-
     #Methods of parent class
     def __do_prework(self):
         num_of_layers = len(self.Layers)
@@ -141,13 +133,11 @@ class Neural_Network:
 
     #X is a matrix, each row represents each input and each column the current value of a set
     #Y is a matrix containing the observed results for each set of inputs
-    def __GradientDescent(self,X,Y):
-        #input(self.d_Weights)
+    def __GradientDescent(self,X,Y,batch):
         total_sets = len(X[0])
-        batches = self.__batches(total_sets)
-        mini_batch = int(total_sets/batches)
-        for j in range(batches):
-            for i in range(j*mini_batch,(j+1)*mini_batch):
+        total_batches = int(total_sets/batch)
+        for j in range(total_batches):
+            for i in range(j*batch,(j+1)*batch):
                 set = X[:,i]
                 observed = Y[:,i]
                 self.__forward_feed(set)
@@ -183,12 +173,12 @@ class Neural_Network:
     def get_Eval(self):
         return self.Evaluation
 
-    def train(self,X,Y,repeats):
+    def train(self,X,Y,repeats,batch):
         X = np.array(X).T
         Y = np.array(Y).T
         for repeat in range(repeats):
             print("\tTraining: ",repeat+1,"/",repeats," completed.")
-            self.__GradientDescent(X,Y)
+            self.__GradientDescent(X,Y,batch)
 
 
 
